@@ -1,61 +1,121 @@
-# Amplifier + Crossover Filter Network
+# Amplifier and Crossover Filter Network
 
 ---
 
 ## Overview
 
-This project covers the design and implementation of an amplifier combined with a crossover filter network, developed as part of an audio engineering lab. The system targets specific audio frequencies and balances component efficiency, signal quality, and cost.
+This project designs and implements an amplifier combined with a crossover filter network for audio signal processing. The system amplifies an input audio signal by at least 10 dB, then splits it into two frequency bands — a low-end (woofer) channel and a midrange channel — using second-order Chebyshev filters.
 
 ---
 
-## Design Choices
+## Signal Chain
 
-Key considerations that drove the design decisions:
-
-- **Amplification Requirement** — Phase distortion was a primary concern; hitting 0 dB at target frequencies was essential.
-- **Component Minimization** — Filter circuits were kept compact to prevent overdraw of resources.
-- **Speed of Attenuation** — Longer signal processing can cause overheating in filter components; this was mitigated by design.
-- **Buffer** — Implemented to prevent loading error between stages.
+```
+Audio Input → Non-Inverting Amplifier (gain 11) → LPF (fc = 305 Hz) → Buffer → Speaker (low)
+                                                 → HPF (fc = 2.1 kHz) → Buffer → Speaker (mid)
+```
 
 ---
 
-## Design Specifications
+## Amplifier Design
 
-### Target Frequencies (Audio 10)
+A non-inverting op-amp configuration was used to achieve a minimum gain of 10 dB (gain = 11):
 
-| Note | Frequency |
-|------|-----------|
-| C4   | 261.595 Hz |
-| G#4  | 830.585 Hz |
-| D#5  | 2489.15 Hz |
+```
+G ≥ 10 ≥ 1 + R₂/R₁  →  R₂ ≥ 9·R₁
+```
 
-### Cutoff Frequencies
-
-- **Low-Pass Filter (LPF):** fc = 305 Hz
-- **High-Pass Filter (HPF):** fc = 2.1 kHz
-
-**Goals:** Minimized costs and maximized efficiency.
+A buffer was added at the output of each filter to prevent loading error.
 
 ---
 
-## Implementation
+## Target Frequencies
 
-The circuit was modeled and simulated using **Simscape** (MATLAB/Simulink). The simulation covered:
+FFT analysis of the audio signal revealed three frequency components:
 
-- Full crossover filter network layout
-- Low-Pass Filter response
-- High-Pass Filter response
+| Band     | Frequency  |
+|----------|-----------|
+| Low-end  | ~261.6 Hz |
+| Midrange | ~830.6 Hz |
+| High-end | ~2489.2 Hz |
+
+**Cutoff frequencies chosen:**
+- LPF: **305 Hz** (passes low-end, blocks midrange and above)
+- HPF: **2.1 kHz** (passes high-end, blocks midrange and below)
+
+Cutoff frequencies were determined using [Analog Filter Wizard](https://www.analog.com/designtools/en/filterwizard/).
+
+---
+
+## Filter Type
+
+Both filters are **second-order Chebyshev** designs, chosen for:
+- Compact component count (lower order filter achieves target cutoff)
+- Fast roll-off relative to Butterworth designs
+- Acceptable passband ripple for audio applications
+
+---
+
+## Component Lists
+
+### Low-Pass Filter (LPF)
+
+| Component | Quantity |
+|-----------|----------|
+| 402 Ω     | 1        |
+| 100 Ω     | 1        |
+| 10 Ω      | 5        |
+| 3 Ω       | 1        |
+| 1 Ω       | 1        |
+| 10 µF     | 1        |
+| 1 µF      | 1        |
+| LM741 op-amp | 1     |
+
+### High-Pass Filter (HPF)
+
+| Component | Quantity |
+|-----------|----------|
+| 1 kΩ      | 1        |
+| 402 Ω     | 1        |
+| 100 Ω     | 2        |
+| 10 Ω      | 1        |
+| 100 nF    | 2        |
+| LM741 op-amp | 1     |
 
 ---
 
 ## Analog vs. Digital Filters
 
-| | Analog Filters | Digital Filters |
+| | Analog | Digital |
 |---|---|---|
-| **Latency** | Low | Higher |
-| **Implementation** | Easier at low frequencies | More complex |
-| **Precision** | Limited | High |
-| **Environmental Immunity** | Lower | High |
+| Latency | Low | Higher |
+| Ease of use at low freq. | High | Moderate |
+| Precision | Limited | High |
+| Component variation immunity | Low | High |
+| Environmental immunity | Low | High |
 
-> Minimum signal for anti-aliasing: ≈ 5,000 samples/second
+> **Nyquist note:** With f_max = 2500 Hz, the minimum sampling rate for A/D conversion is ~5000 samples/sec to prevent aliasing.
 
+---
+
+## Implementation
+
+The circuit was modeled in **MATLAB Simscape** before physical breadboard implementation. Both implementations successfully split the audio signal into two frequency bands.
+
+**Challenges encountered:**
+- Simscape: simulation files placed in incorrect folders
+- Physical: initial assembly failed to output audio; required debugging of the Chebyshev filter stages
+
+---
+
+## Demo Videos (Appendices)
+
+- [Simscape simulation](https://youtube.com/watch/vOlNdGs_ma8)
+- [Low-Pass Filter demo](https://youtu.be/wrvXswK2nsc)
+- [High-Pass Filter demo](https://youtu.be/BuL4UwbUtf8)
+
+---
+
+## References
+
+1. Miller, S. (2020). *Analog vs. digital filtering of data.* Tufts University EE Senior Design Handbook. https://sites.tufts.edu/eeseniordesignhandbook/files/2020/05/Miller_MaxBlueGreen_Tech-note.pdf
