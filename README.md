@@ -1,7 +1,6 @@
 # Amplifier and Crossover Filter Network
 
-**ENGR-212 Design of Dynamical Systems** — Stevens Institute of Technology, December 2023  
-**Author:** Prerana Putrevu
+ **Author:** Prerana Putrevu
 
 ---
 
