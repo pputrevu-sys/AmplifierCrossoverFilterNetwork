@@ -1,7 +1,5 @@
 # Amplifier and Crossover Filter Network
 
----
-
 ## Overview
 
 This project designs and implements an amplifier combined with a crossover filter network for audio signal processing. The system amplifies an input audio signal by at least 10 dB, then splits it into two frequency bands — a low-end (woofer) channel and a midrange channel — using second-order Chebyshev filters.
