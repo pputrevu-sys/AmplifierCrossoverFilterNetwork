@@ -59,16 +59,3 @@ The circuit was modeled and simulated using **Simscape** (MATLAB/Simulink). The 
 
 > Minimum signal for anti-aliasing: ≈ 5,000 samples/second
 
----
-
-## Issues Encountered
-
-- **Simscape:** Simulation files were not placed in the correct folders initially.
-- **Physical Build:** Initial circuit assembly failed to produce audio output and required debugging.
-
----
-
-## Reflections
-
-- The project and prior lab sessions complemented each other well.
-- If repeated, more attention would be given to achieving better sound quality output.
