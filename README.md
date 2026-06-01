@@ -1,6 +1,6 @@
 # Amplifier and Crossover Filter Network
 
- **Author:** Prerana Putrevu
+***December 2023***
 
 ---
 
